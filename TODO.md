@@ -4,3 +4,4 @@ TODO
 2. Create a mobile user class
 3. Modify AudioReceiverThread.java to the new requirements 
 4. Modify AudioTransmitterThread.java to the new requirements
+5. (Optional) Add GUI to system for extra credit 
