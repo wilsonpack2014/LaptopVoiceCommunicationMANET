@@ -10,7 +10,7 @@ public class MobileUser
 	private static Vector myNeighbors;
 	/* My personal router to keep track of packet sequence number and source
 	   Let the source be the hashtable key, and the packet sequence number be the value*/
-	private static Hashtable cacheTable;
+	private static Hashtable packetTable;
 	/* Gathers the voice and transmits it to the destination*/
 	private static AudioTransmitter transmitter;
 	/* Recieves voice packets and plays them on device*/
