@@ -24,6 +24,8 @@ import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
+import java.util.Hashtable;
+
 
 public class AudioReceiverThread implements Runnable
 {
@@ -50,6 +52,11 @@ public class AudioReceiverThread implements Runnable
 
 	/*Size of speaker's buffer size*/
 	int sourceBufferSize;
+
+	/* My personal router to keep track of packet sequence number and source
+	 Let the source be the hashtable key, and the packet sequence number be the value
+	*/
+	static Hashtable packetTable;
 
   	/*
 		@param portNumber: The port number given via command line.
