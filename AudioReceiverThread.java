@@ -106,6 +106,7 @@ public class AudioReceiverThread implements Runnable
 				audioInputStream = new AudioInputStream(receivedVoiceData, audioFormat, voiceData.length);
 
       			byte[] buffer = new byte[sourceBufferSize];
+      			byte[] header = new byte[7];
 
   				/* while you have voice data in the stream play it on the speaker*/
   				int bites = 0;
@@ -113,7 +114,8 @@ public class AudioReceiverThread implements Runnable
   				{
   					/*Write data to the internal buffer of the data line
           			  where it will be delivered to the speaker.*/
-  					sourceDataLine.write(buffer, 0, bites);  					
+          			  	sourceDataLine.write(header, 0, 7);
+  					sourceDataLine.write(buffer, 0, bites);
   				}
 
   				sourceDataLine.drain();
