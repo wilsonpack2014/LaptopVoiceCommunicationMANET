@@ -75,6 +75,9 @@ public class AudioTransmitterThread implements Runnable
 	//Vector<Integer>myNeighbors = new Vector<Integer>();
     int[] myNeighbors;
 
+    /*The configFileReader to get file info*/
+    ConfigFileReader configFileReader;
+
 
   	/* The address of the "previous hop" This is the address the tranmitter needs for 2 cases
   	   case 1: Initial source packet means the previous hop will by my source address
@@ -86,7 +89,7 @@ public class AudioTransmitterThread implements Runnable
 		@param portNumber: The port number given via command line. 
 							it's the port number to the person we wish to call.
 	*/
-	public AudioTransmitterThread(String address, String portNumber, String myNodeNumber, String destinationAddress_) throws IOException
+	public AudioTransmitterThread(String address, String portNumber, String myNodeNumber, String destinationAddress_, String configFileName_in) throws IOException
 	{
 		theirIP = InetAddress.getByName(address);
 		theirPort = Integer.parseInt(portNumber);
@@ -97,6 +100,8 @@ public class AudioTransmitterThread implements Runnable
 
 		/*Identifier as an integer for use by the config file reader*/
 		intID = Integer.parseInt(myNodeNumber);
+
+		configFileReader = new ConfigFileReader(configFileName_in);
 	}
 
 	/*
@@ -144,16 +149,15 @@ public class AudioTransmitterThread implements Runnable
 					bitesRead = targetDataLine.read(buffer, 6, buffer.length);
 
 					/*Get all my neighbors at this time. How often should this be checked? What about when the config file changes?*/
-					//getNeighborsAtThisTime();
-					//int amtOfNeighbors = myNeighbors.size();
-                    //int amtOfNeighbors = myNeighbors.length;
+					getNeighborsAtThisTime();
+                    int amtOfNeighbors = myNeighbors.length;
 
 					/*Send to all neighbors this buffer-packet*/
-					//for(int neighbor 0; neigbor < amtOfNeighbors; neigbor++)
-					//{					
+					for(int neighbor 0; neigbor < amtOfNeighbors; neigbor++)
+					{					
 						DatagramPacket sendPacket = new DatagramPacket(buffer, buffer.length, theirIP, theirPort);
 						socket.send(sendPacket);
-					//}
+					}
 				}while(bitesRead > 0);
 
 
@@ -218,61 +222,65 @@ public class AudioTransmitterThread implements Runnable
 
   	}
 
-  	/*  This method will be used by the receiver thread so it can forward packets according to the requirements document
-		@param myNeighbors: This will be numerical value to describe the other nodes this user can communicate with at the time of the function call.
-		@param packet: 		The packet we will forward to this user's neighbors. Do not give the datagram packet for "packet" 
-								you should give this method the byte array containg the header and voiceData 
-	*/
-  	public static void forwardPacket(Vector<Integer> myNeighbors_, byte[] packet) 
-  	{
-  		/*Set up "forwardersAddress" to be the "previous hop" of the packet information*/
-  		byte hopUpperBits = (byte)(sourceAddress>>8);
-  		byte hopLowerBits = (byte)(sourceAddress);
-  		packet[5] = hopUpperBits;
-  		packet[6] = hopLowerBits;
-
-  		/*Socket to use for sending*/
-  		DatagramSocket forwardSocket = null;
-
-  		/*Get all the neighbor's IP address and UDP port number from config file*/
-  		int amtOfNeighbors = myNeighbors_.size();
-  		for(int neighbor = 0; neighbor < amtOfNeighbors; neighbor++)
-  		{
-  			/*Give me the neighbors IP address using a configfile reader*/
-  			//InetAddress neighborsIP = configfile.getIPaddress(myNeighbors_[neighbor].intValue());
-
-  			/*Give me the neighbors UDP port number using a configfile reader*/
-  			//int neighborsPort = configfile.getPortNumber(myNeighbors_[neigbor].intValue());
-
-  			try
-  			{
-	  			forwardSocket = new DatagramSocket();
-	  			//DatagramPacket forwardPacket = new DatagramPacket(packet, packet.length, neighborsIP, neighborsPort);
-	  			//forwardSocket.send(forwardPacket);
-
-	  		}
-	  		catch(IOException e)
-			{
-				e.printStackTrace();
-			}
-			catch(IllegalArgumentException e)
-  			{
-  				e.printStackTrace();
-  			}
-
-  		}
-
-  		if(forwardSocket != null)
-  		{
-  			forwardSocket.close();
-  		}
-  	}
-
   	private void getNeighborsAtThisTime()
   	{
   		/*Configfile reader should return an Integer vector of all of this user's neighbors*/
-  		//myNeighbors = configFileReader.getMyNeighbors(intID);
+  		myNeighbors = configFileReader.getMyNeighbors(intID);
   	}
+
+
+  	
+
+ //  	/*  This method will be used by the receiver thread so it can forward packets according to the requirements document
+	// 	@param myNeighbors: This will be numerical value to describe the other nodes this user can communicate with at the time of the function call.
+	// 	@param packet: 		The packet we will forward to this user's neighbors. Do not give the datagram packet for "packet" 
+	// 							you should give this method the byte array containg the header and voiceData 
+	// */
+ //  	public static void forwardPacket(int[] myNeighbors_, byte[] packet) 
+ //  	{
+ //  		/*Set up "forwardersAddress" to be the "previous hop" of the packet information*/
+ //  		byte hopUpperBits = (byte)(sourceAddress>>8);
+ //  		byte hopLowerBits = (byte)(sourceAddress);
+ //  		packet[5] = hopUpperBits;
+ //  		packet[6] = hopLowerBits;
+
+ //  		/*Socket to use for sending*/
+ //  		DatagramSocket forwardSocket = null;
+
+ //  		Get all the neighbor's IP address and UDP port number from config file
+ //  		int amtOfNeighbors = myNeighbors_.length;
+ //  		for(int neighbor = 0; neighbor < amtOfNeighbors; neighbor++)
+ //  		{
+ //  			/*Give me the neighbor's IP address using a configfile reader*/
+ //  			//InetAddress neighborsIP = configfile.getIPaddress(myNeighbors_[neighbor];
+
+ //  			/*Give me the neighbor's UDP port number using a configfile reader*/
+ //  			//int neighborsPort = configfile.getPortNumber(myNeighbors_[neigbor];
+
+ //  			try
+ //  			{
+	//   			forwardSocket = new DatagramSocket();
+	//   			//DatagramPacket forwardPacket = new DatagramPacket(packet, packet.length, neighborsIP, neighborsPort);
+	//   			//forwardSocket.send(forwardPacket);
+
+	//   		}
+	//   		catch(IOException e)
+	// 		{
+	// 			e.printStackTrace();
+	// 		}
+	// 		catch(IllegalArgumentException e)
+ //  			{
+ //  				e.printStackTrace();
+ //  			}
+
+ //  		}
+
+ //  		if(forwardSocket != null)
+ //  		{
+ //  			forwardSocket.close();
+ //  		}
+ //  	}
+
 
 
 
