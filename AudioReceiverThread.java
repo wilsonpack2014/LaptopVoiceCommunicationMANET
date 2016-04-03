@@ -1,4 +1,4 @@
-/*
+xq/*
 	This class implements the interface Runnable so that we can 
 	utilize the Thread class capabilites. 
 

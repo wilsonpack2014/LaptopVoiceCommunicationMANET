@@ -72,7 +72,8 @@ public class AudioTransmitterThread implements Runnable
 	int intID;
 
 	/* Contains a list of all the nodes this user can communicate with*/
-	Vector<Integer>myNeighbors = new Vector<Integer>();
+	//Vector<Integer>myNeighbors = new Vector<Integer>();
+    int[] myNeighbors;
 
 
   	/* The address of the "previous hop" This is the address the tranmitter needs for 2 cases
@@ -145,6 +146,7 @@ public class AudioTransmitterThread implements Runnable
 					/*Get all my neighbors at this time. How often should this be checked? What about when the config file changes?*/
 					//getNeighborsAtThisTime();
 					//int amtOfNeighbors = myNeighbors.size();
+                    //int amtOfNeighbors = myNeighbors.length;
 
 					/*Send to all neighbors this buffer-packet*/
 					//for(int neighbor 0; neigbor < amtOfNeighbors; neigbor++)
